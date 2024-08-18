@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metascore por Género</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<h1>Promedio de Metascore por Género</h1>
+<canvas id="metascoreChart" width="600" height="400"></canvas>
+<script>
+    // Función para obtener los datos y renderizar el gráfico
+    async function fetchData() {
+        const response = await fetch('/data');
+        const data = await response.json();
+
+        const genreScores = {};
+        data.forEach(item => {
+            if (!genreScores[item.Genre]) {
+                genreScores[item.Genre] = [];
+            }
+            genreScores[item.Genre].push(item.Metascore);
+        });
+
+        const labels = [];
+        const averages = [];
+        const colors = []; // Array para los colores de cada barra
+        const colorPalette = [
+            'rgba(255, 99, 132, 0.2)', // Color 1
+            'rgba(54, 162, 235, 0.2)', // Color 2
+            'rgba(255, 206, 86, 0.2)', // Color 3
+            'rgba(75, 192, 192, 0.2)', // Color 4
+            'rgba(153, 102, 255, 0.2)', // Color 5
+            'rgba(255, 159, 64, 0.2)'  // Color 6
+        ];
+
+        let colorIndex = 0;
+        for (const [genre, scores] of Object.entries(genreScores)) {
+            labels.push(genre);
+            const average = scores.reduce((a, b) => a + b, 0) / scores.length;
+            averages.push(average);
+            colors.push(colorPalette[colorIndex % colorPalette.length]); // Asignar color
+            colorIndex++;
+        }
+
+        const ctx = document.getElementById('metascoreChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Promedio de Metascore',
+                    data: averages,
+                    backgroundColor: colors, // Aplicar colores personalizados
+                    borderColor: colors.map(color => color.replace('0.2', '1')), // Colores de borde
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    fetchData();
+</script>
+</body>
+</html>
