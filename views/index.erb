@@ -9,8 +9,10 @@
 <body>
 <h1>Promedio de Metascore por Género</h1>
 <canvas id="metascoreChart" width="600" height="400"></canvas>
+<h1>Suma de Jugadores por Rango de Precio</h1>
+<canvas id="priceChart" width="600" height="400"></canvas>
 <script>
-    // Función para obtener los datos y renderizar el gráfico
+    // Función para obtener los datos y renderizar el gráfico de Metascore por Género
     async function fetchData() {
         const response = await fetch('/data');
         const data = await response.json();
@@ -25,7 +27,7 @@
 
         const labels = [];
         const averages = [];
-        const colors = []; // Array para los colores de cada barra
+        const colors = [];
         const colorPalette = [
             'rgba(255, 99, 132, 0.2)', // Color 1
             'rgba(54, 162, 235, 0.2)', // Color 2
@@ -40,7 +42,7 @@
             labels.push(genre);
             const average = scores.reduce((a, b) => a + b, 0) / scores.length;
             averages.push(average);
-            colors.push(colorPalette[colorIndex % colorPalette.length]); // Asignar color
+            colors.push(colorPalette[colorIndex % colorPalette.length]);
             colorIndex++;
         }
 
@@ -52,8 +54,8 @@
                 datasets: [{
                     label: 'Promedio de Metascore',
                     data: averages,
-                    backgroundColor: colors, // Aplicar colores personalizados
-                    borderColor: colors.map(color => color.replace('0.2', '1')), // Colores de borde
+                    backgroundColor: colors,
+                    borderColor: colors.map(color => color.replace('0.2', '1')),
                     borderWidth: 1
                 }]
             },
@@ -68,6 +70,50 @@
     }
 
     fetchData();
+
+    // Función para obtener los datos y renderizar el gráfico de jugadores por rango de precio
+    async function fetchPriceData() {
+        const response = await fetch('/price_ranges');
+        const data = await response.json();
+
+        const labels = Object.keys(data);
+        const values = Object.values(data);
+        const colors = [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(0, 255, 0, 0.2)',
+            'rgba(0, 0, 255, 0.2)',
+            'rgba(128, 0, 128, 0.2)'  // Color para Free to Play
+        ];
+
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Suma de Jugadores por Rango de Precio',
+                    data: values,
+                    backgroundColor: colors,
+                    borderColor: colors.map(color => color.replace('0.2', '1')),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    fetchPriceData();
 </script>
 </body>
 </html>
