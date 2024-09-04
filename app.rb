@@ -8,7 +8,6 @@ def read_csv_game(file_path)
   CSV.foreach(file_path, headers: true) do |row|
     data << {
       "Title" => row["Title"],
-      "Platform" => row["Platform"],
       "Release_Date" => row["Release_Date"],
       "Metascore" => row["Metascore"].to_i,
       "Genre" => row["Genre"]
@@ -82,10 +81,21 @@ def calculate_players_by_price_range(data)
 
   ranges
 end
-DATA2 = read_csv_game_with_price('steam_charts_games.csv')
 
-# Calcular los datos para la suma de jugadores por rango de precio
+def read_csv_game_genre(file_path)
+  genre_counts = Hash.new(0)
+  CSV.foreach(file_path, headers: true) do |row|
+    genre = row["Genre"]
+    genre_counts[genre] += 1
+  end
+  genre_counts
+end
+
+
+DATA2 = read_csv_game_with_price('steam_charts_games.csv')
 PLAYERS_BY_PRICE_RANGE = calculate_players_by_price_range(DATA2)
+GENRE_COUNTS = read_csv_game_genre('new_games.csv')
+
 
 get '/price_ranges' do
   content_type :json
@@ -96,6 +106,11 @@ end
 get '/data' do
   content_type :json
   DATA.to_json
+end
+
+get '/genre_counts' do
+  content_type :json
+  GENRE_COUNTS.to_json
 end
 
 get '/' do

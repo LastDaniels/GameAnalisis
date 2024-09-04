@@ -3,14 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Metascore por Género</title>
+  <title>Analisis de Juegos</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/888/888879.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+
+  <style>
+      body {
+          font-family: 'Press Start 2P', cursive;
+          background-color: #ffffff; /* Fondo blanco */
+          color: black; /* Texto en negro */
+          text-align: center;
+          margin: 0;
+          padding: 0;
+      }
+
+      #background {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-image: url("https://www.transparenttextures.com/patterns/black-thread-light.png");
+          background-size: auto;
+          background-repeat: repeat;
+          z-index: -1;
+      }
+      #content {
+          position: relative;
+          z-index: 1;
+          padding: 20px;
+      }
+
+      canvas {
+          font-family: 'Press Start 2P', cursive;
+          margin: 20px auto;
+          max-width: 2000px; /* Limitar el ancho máximo del gráfico */
+          max-height: 1500px; /* Limitar la altura máxima del gráfico */
+          width: 100%;
+          height: auto;
+      }
+
+      h1 {
+          font-size: 24px;
+          margin: 20px;
+      }
+  </style>
 </head>
 <body>
-<h1>Promedio de Metascore por Género</h1>
-<canvas id="metascoreChart" width="600" height="400"></canvas>
-<h1>Suma de Jugadores por Rango de Precio</h1>
-<canvas id="priceChart" width="600" height="400"></canvas>
+<div id="background"></div>
+<div id="content">
+  <h1><i class="fas fa-gamepad"></i> Promedio de Metascore por Género</h1>
+  <canvas id="metascoreChart"></canvas>
+
+  <h1><i class="fas fa-coins"></i> Suma de Jugadores por Rango de Precio</h1>
+  <canvas id="priceChart"></canvas>
+
+  <h1><i class="fas fa-dice"></i> Cantidad de Juegos recientes por Género</h1>
+  <canvas id="genreChart"></canvas>
+</div>
+
 <script>
     // Función para obtener los datos y renderizar el gráfico de Metascore por Género
     async function fetchData() {
@@ -114,6 +168,50 @@
     }
 
     fetchPriceData();
+
+    // Función para obtener los datos y renderizar el gráfico de cantidad de juegos por género
+    async function fetchGenreData() {
+        const response = await fetch('/genre_counts');
+        const data = await response.json();
+
+        const labels = Object.keys(data);
+        const values = Object.values(data);
+        const colors = [
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(0, 255, 0, 0.2)',
+            'rgba(0, 0, 255, 0.2)',
+            'rgba(128, 0, 128, 0.2)',
+            'rgba(255, 0, 0, 0.2)',
+            'rgba(0, 128, 128, 0.2)'
+        ];
+        const ctx = document.getElementById('genreChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Cantidad de Juegos por Género',
+                    data: values,
+                    backgroundColor: colors,
+                    borderColor: colors.map(color => color.replace('0.2', '1')),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    fetchGenreData();
 </script>
 </body>
 </html>

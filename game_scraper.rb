@@ -10,9 +10,7 @@ class GameScraper
     "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:115.0) Gecko/20100101 Firefox/115.0"
   ]
 
-  def initialize(min_year, max_year, output_file)
-    @min_year = min_year
-    @max_year = max_year
+  def initialize(output_file)
     @page = 1
     @output_file = output_file
   end
@@ -28,6 +26,24 @@ class GameScraper
           genre = scrape_game_genre(game[:link])
           csv << [game[:title], game[:release_date], game[:metascore], genre]
           sleep(1) # Pausa de 1 segundo entre peticiones para reducir la tasa de solicitudes
+        end
+        @page += 1
+        sleep(2)
+      end
+    end
+    puts "Scraping completed! Data saved to #{@output_file}."
+  end
+  def scrape_new
+    CSV.open(@output_file, 'wb', write_headers: true, headers: %w[Title Platform Release_Date Genre]) do |csv|
+      loop do
+        url = "#{BASE_URL}/browse/game/pc/all/current-year/new/?platform=pc&page=#{@page}"
+        games = scrape_page(url)
+        break if games.empty? || @page > 10
+
+        games.each do |game|
+          genre = scrape_game_genre(game[:link])
+          csv << [game[:title], "PC", game[:release_date], genre]
+          sleep(1)
         end
         @page += 1
         sleep(2)
@@ -74,5 +90,7 @@ class GameScraper
 end
 
 # Configura los años y el archivo de salida
-scraper = GameScraper.new(2022, 2024, 'metacritic_games.csv')
-scraper.scrape_all_pages
+#scraper = GameScraper.new('metacritic_games.csv')
+#scraper.scrape_all_pages
+scraper2 = GameScraper.new('new_games.csv')
+scraper2.scrape_new
