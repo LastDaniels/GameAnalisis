@@ -2,7 +2,7 @@ require 'sinatra'
 require 'csv'
 require 'json'
 
-# Leer datos desde el archivo CSV
+
 def read_csv_game(file_path)
   data = []
   CSV.foreach(file_path, headers: true) do |row|
@@ -23,13 +23,13 @@ def read_csv_game_with_price(file_path)
   CSV.foreach(file_path, headers: true) do |row|
     price = row["Price"].strip
 
-    # Eliminar el signo de dólar si está presente
+
     price = price.sub(/\$/, '')
 
     if price.downcase == "free to play"
       price_value = 0.0
     else
-      # Asegúrate de manejar casos donde el valor pueda no ser un número válido
+
       price_value = price.match(/\d+(\.\d+)?/) ? price.to_f : nil
     end
 

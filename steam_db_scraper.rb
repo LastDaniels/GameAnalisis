@@ -42,6 +42,6 @@ class SteamScraper
   end
 end
 
-# Uso de ejemplo:
+
 scraper = SteamScraper.new
 scraper.scrape_games

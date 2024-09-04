@@ -13,8 +13,8 @@
   <style>
       body {
           font-family: 'Press Start 2P', cursive;
-          background-color: #ffffff; /* Fondo blanco */
-          color: black; /* Texto en negro */
+          background-color: #ffffff;
+          color: black;
           text-align: center;
           margin: 0;
           padding: 0;
@@ -40,8 +40,8 @@
       canvas {
           font-family: 'Press Start 2P', cursive;
           margin: 20px auto;
-          max-width: 2000px; /* Limitar el ancho máximo del gráfico */
-          max-height: 1500px; /* Limitar la altura máxima del gráfico */
+          max-width: 2000px;
+          max-height: 1500px;
           width: 100%;
           height: auto;
       }
@@ -66,7 +66,6 @@
 </div>
 
 <script>
-    // Función para obtener los datos y renderizar el gráfico de Metascore por Género
     async function fetchData() {
         const response = await fetch('/data');
         const data = await response.json();
@@ -125,7 +124,6 @@
 
     fetchData();
 
-    // Función para obtener los datos y renderizar el gráfico de jugadores por rango de precio
     async function fetchPriceData() {
         const response = await fetch('/price_ranges');
         const data = await response.json();
@@ -169,7 +167,6 @@
 
     fetchPriceData();
 
-    // Función para obtener los datos y renderizar el gráfico de cantidad de juegos por género
     async function fetchGenreData() {
         const response = await fetch('/genre_counts');
         const data = await response.json();

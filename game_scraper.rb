@@ -19,13 +19,12 @@ class GameScraper
     CSV.open(@output_file, 'wb', write_headers: true, headers: %w[Title Platform Release_Date Metascore]) do |csv|
       loop do
         url = "#{BASE_URL}/browse/game/pc/all/current-year/metascore/?platform=pc&page=#{@page}"
-        #puts "Scraping page #{@page + 1}..."
         games = scrape_page(url)
-        break if games.empty? # Detener si no se encuentran más juegos
+        break if games.empty?
         games.each do |game|
           genre = scrape_game_genre(game[:link])
           csv << [game[:title], game[:release_date], game[:metascore], genre]
-          sleep(1) # Pausa de 1 segundo entre peticiones para reducir la tasa de solicitudes
+          sleep(1)
         end
         @page += 1
         sleep(2)
@@ -89,8 +88,8 @@ class GameScraper
   end
 end
 
-# Configura los años y el archivo de salida
-#scraper = GameScraper.new('metacritic_games.csv')
-#scraper.scrape_all_pages
+
+scraper = GameScraper.new('metacritic_games.csv')
+scraper.scrape_all_pages
 scraper2 = GameScraper.new('new_games.csv')
 scraper2.scrape_new
